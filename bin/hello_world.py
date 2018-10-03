@@ -16,6 +16,7 @@ import sklearn.ensemble as sk_ensemble
 def main():
 
     print('Welcome to Our Group!')
+    print('Jonas is on board')
 
     # --- scikit-learn
 
