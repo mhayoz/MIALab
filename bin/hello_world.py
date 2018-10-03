@@ -15,7 +15,7 @@ import sklearn.ensemble as sk_ensemble
 
 def main():
 
-    print('Welcome to Our Group!')
+    print('Welcome to Our Group Michel!')
 
     # --- scikit-learn
 
