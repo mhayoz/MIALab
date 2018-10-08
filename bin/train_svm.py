@@ -49,15 +49,18 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     print('-' * 5, 'Training...')
 
-    fileId = open('preprocessedImages.pckl', 'rb')
-    images = pickle.load(fileId)
-    fileId.close()
+    # load feature matrix and label vector
+    # precomputed by preprocessAndStore.py
+    file_id = open('data_train.pckl', 'rb')
+    data_train = pickle.load(file_id)
+    file_id.close()
 
-    # generate feature matrix and label vector
-    data_train = np.concatenate([img.feature_matrix[0] for img in images])
-    labels_train = np.concatenate([img.feature_matrix[1] for img in images]).squeeze()
+    file_id = open('labels_train.pckl', 'rb')
+    labels_train = pickle.load(file_id)
+    file_id.close()
 
-##########################################
+
+    ##########################################
     # To do implement SVM here
 
     # forest = sk_ensemble.RandomForestClassifier(max_features=images[0].feature_matrix[0].shape[1],
@@ -68,6 +71,11 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     start_time = timeit.default_timer()
     #forest.fit(data_train, labels_train)
     svm_classifier.fit(data_train,labels_train)
+
+    # store trained SVM
+    file_id = open('svm.pckl', 'wb')
+    pickle.dump(svm_classifier, file_id)
+    file_id.close()
 
     print(' Time elapsed:', timeit.default_timer() - start_time, 's')
 

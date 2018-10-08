@@ -60,11 +60,18 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     # load images for training and pre-process
     images = putil.pre_process_batch(crawler.data, pre_process_params, multi_process=False)
 
+    # generate feature matrix and label vector
+    data_train = np.concatenate([img.feature_matrix[0] for img in images])
+    labels_train = np.concatenate([img.feature_matrix[1] for img in images]).squeeze()
+
     # store preprocessed images to file
-    fileId = open('preprocessedImages.pckl', 'wb')
-    pickle.dump(images,fileId)
-    fileId.close()
-    print('-' * 5, 'Preprocessd images stored')
+    file_id = open('data_train.pckl', 'wb')
+    pickle.dump(data_train, file_id)
+    file_id.close()
+    file_id = open('labels_train.pckl', 'wb')
+    pickle.dump(labels_train, file_id)
+    file_id.close()
+    print('-' * 5, 'Preprocessed images stored')
 
 if __name__ == "__main__":
     """The program's entry point."""
