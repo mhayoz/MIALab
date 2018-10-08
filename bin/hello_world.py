@@ -17,6 +17,7 @@ def main():
 
     print('Welcome to Our Group!')
     print('Jonas is on board')
+    print('Matthias is on board')
 
     # --- scikit-learn
 
