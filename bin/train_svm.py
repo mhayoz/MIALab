@@ -12,6 +12,7 @@ import pickle
 import SimpleITK as sitk
 import sklearn.ensemble as sk_ensemble
 from sklearn import svm
+from sklearn import model_selection
 import numpy as np
 import pymia.data.conversion as conversion
 import pymia.data.loading as load
@@ -61,16 +62,19 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
 
     ##########################################
-    # To do implement SVM here
 
-    # forest = sk_ensemble.RandomForestClassifier(max_features=images[0].feature_matrix[0].shape[1],
-    #                                             n_estimators=20,
-    #                                             max_depth=25)
-    svm_classifier = svm.LinearSVC() #probability=False, kernel= 'rbf') #kernel='linear')
+    # perform a grid search over the parameter grid and choose the optimal parameters
+    param_grid = {'C': [0.0002, 0.0005, 0.001, 0.003, 0.004]}  # grid to search for best parameter C = 0.02
+    svm_classifier = model_selection.GridSearchCV(svm.LinearSVC(class_weight='balanced'), param_grid, verbose=1)
 
+    #svm_classifier = svm.LinearSVC(C=0.02, class_weight='balanced')  # probability=False, kernel= 'rbf') #kernel='linear')
     start_time = timeit.default_timer()
-    #forest.fit(data_train, labels_train)
-    svm_classifier.fit(data_train,labels_train)
+
+    svm_classifier.fit(data_train, labels_train)
+
+    print("best estimator: ", svm_classifier.best_estimator_)
+    print("best parameter: ", svm_classifier.best_params_)
+
 
     # store trained SVM
     file_id = open('svm.pckl', 'wb')
