@@ -70,7 +70,6 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     print('abschnitt 1')
 
-    #svm_classifier = svm.LinearSVC(C=0.02, class_weight='balanced')  # probability=False, kernel= 'rbf') #kernel='linear')
     start_time = timeit.default_timer()
 
     log_reg_classifier.fit(data_train, labels_train)
