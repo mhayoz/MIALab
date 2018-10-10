@@ -17,6 +17,8 @@ import numpy as np
 import pymia.data.conversion as conversion
 import pymia.data.loading as load
 
+import scipy
+
 sys.path.insert(0, os.path.join(os.path.dirname(sys.argv[0]), '..'))  # append the MIALab root directory to Python path
 # fixes the ModuleNotFoundError when executing main.py in the console after code changes (e.g. git pull)
 # somehow pip install does not keep track of packages
@@ -64,16 +66,23 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     ##########################################
 
     # perform a grid search over the parameter grid and choose the optimal parameters
-    param_grid = {'C': [0.0002, 0.0005, 0.001, 0.003, 0.004]}  # grid to search for best parameter C = 0.02
-    svm_classifier = model_selection.GridSearchCV(svm.LinearSVC(class_weight='balanced'), param_grid, verbose=1)
+    #param_grid = {'C': [0.0002, 0.0005, 0.001, 0.003, 0.004]}  # grid to search for best parameter C = 0.02
+    #svm_classifier = model_selection.GridSearchCV(svm.LinearSVC(class_weight='balanced'), param_grid, verbose=1)
 
-    #svm_classifier = svm.LinearSVC(C=0.02, class_weight='balanced')  # probability=False, kernel= 'rbf') #kernel='linear')
+    data_train_scaled = scipy.stats.zscore(data_train,axis=0)
+
+    # use balanced class weights to include classes with small sample size
+    # solve the primal problem since n_features < n_samples
+    # set fit_intercept to false, because features are already centered
+
+    #svm_classifier = svm.LinearSVC(C=0.02, class_weight='balanced', dual=False, fit_intercept=False)  # probability=False, kernel= 'rbf') #kernel='linear')
     start_time = timeit.default_timer()
 
-    svm_classifier.fit(data_train, labels_train)
+    svm_classifier.fit(data_train_scaled, labels_train)
 
-    print("best estimator: ", svm_classifier.best_estimator_)
-    print("best parameter: ", svm_classifier.best_params_)
+    print(svm_classifier.coef_)
+    #print("best estimator: ", svm_classifier.best_estimator_)
+    #print("best parameter: ", svm_classifier.best_params_)
 
 
     # store trained SVM
