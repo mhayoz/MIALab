@@ -77,7 +77,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
 
     # store trained SVM
-    file_id = open('svm.pckl', 'wb')
+    file_id = open('svm_linear.pckl', 'wb')
     pickle.dump(svm_classifier, file_id)
     file_id.close()
 
