@@ -66,7 +66,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     # perform a grid search over the parameter grid and choose the optimal parameters
     param_grid = {'C': [0.5, 100, 1000, 10000, 1000000]}  # grid to search for best parameter C = 0.02
-    log_reg_classifier = model_selection.GridSearchCV(sk.LogisticRegression(), param_grid)
+    log_reg_classifier = model_selection.GridSearchCV(sk.LogisticRegression(), param_grid, refit=True)
 
     print('abschnitt 1')
 
@@ -76,6 +76,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     print('abschnitt 2')
 
+    print("importance of features: ", log_reg_classifier.best_estimator_.coef_)
     print("best estimator: ", log_reg_classifier.best_estimator_)
     print("best parameter: ", log_reg_classifier.best_params_)
 
