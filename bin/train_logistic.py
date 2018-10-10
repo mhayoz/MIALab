@@ -24,6 +24,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(sys.argv[0]), '..'))  # append t
 import mialab.data.structure as structure
 import mialab.utilities.file_access_utilities as futil
 import mialab.utilities.pipeline_utilities as putil
+import sklearn.linear_model as sk
 
 IMAGE_KEYS = [structure.BrainImageTypes.T1,
               structure.BrainImageTypes.T2,
@@ -65,20 +66,25 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     # perform a grid search over the parameter grid and choose the optimal parameters
     param_grid = {'C': [0.0002, 0.0005, 0.001, 0.003, 0.004]}  # grid to search for best parameter C = 0.02
-    svm_classifier = model_selection.GridSearchCV(svm.LinearSVC(class_weight='balanced'), param_grid, verbose=1)
+    log_reg_classifier = model_selection.GridSearchCV(sk.LogisticRegression(), param_grid)
+
+    print('abschnitt 1')
 
     #svm_classifier = svm.LinearSVC(C=0.02, class_weight='balanced')  # probability=False, kernel= 'rbf') #kernel='linear')
     start_time = timeit.default_timer()
 
-    svm_classifier.fit(data_train, labels_train)
+    log_reg_classifier.fit(data_train, labels_train)
 
-    print("best estimator: ", svm_classifier.best_estimator_)
-    print("best parameter: ", svm_classifier.best_params_)
+    print('abschnitt 2')
+
+    print(log_reg_classifier.coef_)
+    #print("best estimator: ", log_reg_classifier.best_estimator_)
+    #print("best parameter: ", log_reg_classifier.best_params_)
 
 
     # store trained log_regr
     file_id = open('log_regr.pckl', 'wb')
-    pickle.dump(svm_classifier, file_id)
+    pickle.dump(log_reg_classifier, file_id)
     file_id.close()
 
     print(' Time elapsed:', timeit.default_timer() - start_time, 's')
