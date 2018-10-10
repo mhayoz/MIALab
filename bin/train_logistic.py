@@ -31,7 +31,7 @@ IMAGE_KEYS = [structure.BrainImageTypes.T1,
 
 
 def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_dir: str):
-    """Brain tissue segmentation using decision forests.
+    """Brain tissue segmentation using logistic regression.
 
     The main routine executes the medical image analysis pipeline:
 
@@ -39,8 +39,8 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
         - Registration
         - Pre-processing
         - Feature extraction
-        - Decision forest classifier model building
-        - Segmentation using the decision forest classifier model on unseen images
+        - Logistic regression classifier model building
+        - Segmentation using logistic regression on unseen images
         - Post-processing of the segmentation
         - Evaluation of the segmentation
     """
@@ -76,8 +76,8 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     print("best parameter: ", svm_classifier.best_params_)
 
 
-    # store trained SVM
-    file_id = open('svm_linear.pckl', 'wb')
+    # store trained log_regr
+    file_id = open('log_regr.pckl', 'wb')
     pickle.dump(svm_classifier, file_id)
     file_id.close()
 
