@@ -23,6 +23,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(sys.argv[0]), '..'))  # append t
 import mialab.data.structure as structure
 import mialab.utilities.file_access_utilities as futil
 import mialab.utilities.pipeline_utilities as putil
+import util
 
 IMAGE_KEYS = [structure.BrainImageTypes.T1,
               structure.BrainImageTypes.T2,
@@ -57,8 +58,12 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     print('-' * 5, 'Testing...')
 
     # load classifier
-    file_id = open('svm.pckl', 'rb')
+    file_id = open('svm_linear.pckl', 'rb')
     svm_classifier = pickle.load(file_id)
+    file_id.close()
+
+    file_id = open('scaler.pckl', 'rb')
+    scaler = pickle.load(file_id)
     file_id.close()
 
     # initialize evaluator
@@ -80,9 +85,9 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     for img in images_test:
         print('-' * 10, 'Testing', img.id_)
-
+        scaled_features, s = util.scale_features(img.feature_matrix[0],scaler)
         start_time = timeit.default_timer()
-        predictions = svm_classifier.predict(img.feature_matrix[0])
+        predictions = svm_classifier.predict(scaled_features)
         #probabilities = svm_classifier.predict_proba(img.feature_matrix[0])
         #predictions = forest.predict(img.feature_matrix[0])
         #probabilities = forest.predict_proba(img.feature_matrix[0])

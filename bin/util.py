@@ -1,5 +1,5 @@
 import numpy as np
-import scipy
+from sklearn import preprocessing
 
 feature_key = ['x', 'y', 'z', 'T1 intensity', 'T2 intensity', 'T1 grad', 'T2 grad']
 class_key = ['background', 'white matter', 'grey matter', 'hippocampus', 'amygdala', 'thalamus']
@@ -15,12 +15,14 @@ def print_feature_importance(coefficients):
         print([feature_key[j] for j in ranking[i, :]])
 
 
-def scale_features(feature_matrix):
+def scale_features(feature_matrix, scaler=None):
     # scale each feature to zero mean and unit variance
 
     # scale features before training
-    scaled_feature_matrix = scipy.stats.zscore(feature_matrix, axis=0)
-    return scaled_feature_matrix
+    if scaler is None:
+        scaler = preprocessing.StandardScaler().fit(feature_matrix)
+    scaled_feature_matrix = scaler.transform(feature_matrix)
+    return scaled_feature_matrix, scaler
 
 
 def print_class_count(labels):
