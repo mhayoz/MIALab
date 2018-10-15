@@ -16,10 +16,8 @@ from sklearn import model_selection
 import numpy as np
 import pymia.data.conversion as conversion
 import pymia.data.loading as load
-<<<<<<< HEAD
 import util
-=======
->>>>>>> 4ff56ac3bb82cb12875c15ed97ed0c7b2d0f785f
+
 
 import scipy
 
@@ -69,7 +67,6 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     ##########################################
 
-<<<<<<< HEAD
 
     # perform a grid search over the parameter grid and choose the optimal parameters
     #param_grid = {'C': [0.000001, 0.001, 0.01, 0.1, 0.2, 0.5, 0.8, 1]}  # grid to search for best parameter C = 0.02
@@ -90,27 +87,6 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     util.print_feature_importance(svm_classifier.coef_)
 
 
-=======
-    # perform a grid search over the parameter grid and choose the optimal parameters
-    #param_grid = {'C': [0.0002, 0.0005, 0.001, 0.003, 0.004]}  # grid to search for best parameter C = 0.02
-    #svm_classifier = model_selection.GridSearchCV(svm.LinearSVC(class_weight='balanced'), param_grid, verbose=1)
-
-    data_train_scaled = scipy.stats.zscore(data_train,axis=0)
-
-    # use balanced class weights to include classes with small sample size
-    # solve the primal problem since n_features < n_samples
-    # set fit_intercept to false, because features are already centered
-
-    #svm_classifier = svm.LinearSVC(C=0.02, class_weight='balanced', dual=False, fit_intercept=False)  # probability=False, kernel= 'rbf') #kernel='linear')
-    start_time = timeit.default_timer()
-
-    svm_classifier.fit(data_train_scaled, labels_train)
-
-    print(svm_classifier.coef_)
->>>>>>> 4ff56ac3bb82cb12875c15ed97ed0c7b2d0f785f
-    #print("best estimator: ", svm_classifier.best_estimator_)
-    #print("best parameter: ", svm_classifier.best_params_)
-
 
     # store trained SVM
     file_id = open('svm_linear.pckl', 'wb')
@@ -119,13 +95,6 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     print(' Time elapsed:', timeit.default_timer() - start_time, 's')
 
-<<<<<<< HEAD
-=======
-    # create a result directory with timestamp
-    t = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-    result_dir = os.path.join(result_dir, t)
-    os.makedirs(result_dir, exist_ok=True)
->>>>>>> 4ff56ac3bb82cb12875c15ed97ed0c7b2d0f785f
 
 
 if __name__ == "__main__":
