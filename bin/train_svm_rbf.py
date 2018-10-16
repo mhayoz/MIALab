@@ -94,13 +94,14 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     #print("importance of features: ", svm_rbf_classifier.best_estimator_.coef_)#####svm_rbf_classifier.coef_ can not be used with rbf kernel
     #print("best estimator: ", svm_rbf_classifier.best_estimator_)
     #print("best parameter: ", svm_rbf_classifier.best_params_)
+
     #use if GridSearchCV is not used
     print("best estimator: ", svm_rbf_classifier)
     print("estimator dual_coef_: ", svm_rbf_classifier.dual_coef_)
 
 
 
-    file_id = open('svm_rbf_linear.pckl', 'wb')
+    file_id = open('svm_rbf.pckl', 'wb')
     pickle.dump(svm_rbf_classifier, file_id)
     file_id.close()
     file_id = open('scaler_rbf.pckl', 'wb')
