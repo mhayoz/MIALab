@@ -16,6 +16,7 @@ from sklearn import model_selection
 import numpy as np
 import pymia.data.conversion as conversion
 import pymia.data.loading as load
+import util
 
 sys.path.insert(0, os.path.join(os.path.dirname(sys.argv[0]), '..'))  # append the MIALab root directory to Python path
 # fixes the ModuleNotFoundError when executing main.py in the console after code changes (e.g. git pull)
@@ -64,29 +65,39 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     ##########################################
 
     # perform a grid search over the parameter grid and choose the optimal parameters
-    param_grid = {'C': [0.0002, 0.0005, 0.001, 0.003, 0.004]}  # grid to search for best parameter C = 0.02
-    svm_classifier = model_selection.GridSearchCV(svm.LinearSVC(class_weight='balanced'), param_grid, verbose=1)
+    Cs = [0.001, 1]
+    gammas = [0.001, 1]
+    param_grid = {'C': Cs, 'gamma': gammas}
+    svm_rbf_classifier = model_selection.GridSearchCV(svm.SVC(kernel='rbf'), param_grid, verbose=1)
 
-    #svm_classifier = svm.LinearSVC(C=0.02, class_weight='balanced')  # probability=False, kernel= 'rbf') #kernel='linear')
+    data_train_scaled, scaler = util.scale_features(data_train)
+
+    util.print_class_count(labels_train)
+
+
+
+    #svm_rbf_classifier = svm.SVC(kernel= 'rbf', gamma='scale',class_weight='balanced', C=0.02, decision_function_shape='ovo')
+
     start_time = timeit.default_timer()
 
-    svm_classifier.fit(data_train, labels_train)
+    print("start training")
+    svm_rbf_classifier.fit(data_train_scaled, labels_train)
 
-    print("best estimator: ", svm_classifier.best_estimator_)
-    print("best parameter: ", svm_classifier.best_params_)
+    #util.print_feature_importance(svm_rbf_classifier.coef_)
+
+    #print("importance of features: ", svm_rbf_classifier.best_estimator_.coef_)
+    print("best estimator: ", svm_rbf_classifier.best_estimator_)
+    print("best parameter: ", svm_rbf_classifier.best_params_)
 
 
-    # store trained SVM
-    file_id = open('svm_linear.pckl', 'wb')
-    pickle.dump(svm_classifier, file_id)
+    file_id = open('svm_rbf_linear.pckl', 'wb')
+    pickle.dump(svm_rbf_classifier, file_id)
+    file_id.close()
+    file_id = open('scaler_rbf.pckl', 'wb')
+    pickle.dump(scaler, file_id)
     file_id.close()
 
     print(' Time elapsed:', timeit.default_timer() - start_time, 's')
-
-    # create a result directory with timestamp
-    t = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-    result_dir = os.path.join(result_dir, t)
-    os.makedirs(result_dir, exist_ok=True)
 
 
 if __name__ == "__main__":
