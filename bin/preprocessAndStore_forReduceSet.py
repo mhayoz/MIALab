@@ -23,6 +23,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(sys.argv[0]), '..'))  # append t
 import mialab.data.structure as structure
 import mialab.utilities.file_access_utilities as futil
 import mialab.utilities.pipeline_utilities as putil
+import util
 
 IMAGE_KEYS = [structure.BrainImageTypes.T1,
               structure.BrainImageTypes.T2,
@@ -59,11 +60,17 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     # load images for training and pre-process
     images = putil.pre_process_batch(crawler.data, pre_process_params, multi_process=False,
-                                     label_percentages = [0.00003, 0.0004, 0.0003, 0.004, 0.004, 0.002])
+                                     label_percentages = [0.00003, 0.0004, 0.0003, 0.016, 0.05, 0.01])
 
     # generate feature matrix and label vector
     data_train = np.concatenate([img.feature_matrix[0] for img in images])
     labels_train = np.concatenate([img.feature_matrix[1] for img in images]).squeeze()
+
+
+    #printing out how much labels of each group were taken by the mask
+    util.print_class_count(labels_train)
+
+
 
     # store preprocessed images to file
     file_id = open('data_train_reduced.pckl', 'wb')

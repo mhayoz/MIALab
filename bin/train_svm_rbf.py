@@ -72,6 +72,9 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     data_train_scaled, scaler = util.scale_features(data_train)
 
+
+
+    # printing out how much labels of each group were taken by the mask
     util.print_class_count(labels_train)
 
 
