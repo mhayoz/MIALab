@@ -12,11 +12,9 @@ import pickle
 import SimpleITK as sitk
 import sklearn.ensemble as sk_ensemble
 from sklearn import svm
-from sklearn import model_selection
 import numpy as np
 import pymia.data.conversion as conversion
 import pymia.data.loading as load
-import util
 
 sys.path.insert(0, os.path.join(os.path.dirname(sys.argv[0]), '..'))  # append the MIALab root directory to Python path
 # fixes the ModuleNotFoundError when executing main.py in the console after code changes (e.g. git pull)
@@ -40,10 +38,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
         - Registration
         - Pre-processing
         - Feature extraction
-        - Decision forest classifier model building
-        - Segmentation using the decision forest classifier model on unseen images
-        - Post-processing of the segmentation
-        - Evaluation of the segmentation
+
     """
 
     # load atlas images
@@ -51,54 +46,33 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     print('-' * 5, 'Training...')
 
-    # load feature matrix and label vector
-    # precomputed by preprocessAndStore.py
-    file_id = open('data_train_reduced.pckl', 'rb')
-    data_train = pickle.load(file_id)
+    # crawl the training image directories
+    crawler = load.FileSystemDataCrawler(data_train_dir,
+                                         IMAGE_KEYS,
+                                         futil.BrainImageFilePathGenerator(),
+                                         futil.DataDirectoryFilter())
+    pre_process_params = {'zscore_pre': True,
+                          'registration_pre': False,
+                          'coordinates_feature': True,
+                          'intensity_feature': True,
+                          'gradient_intensity_feature': True}
+
+    # load images for training and pre-process
+    images = putil.pre_process_batch(crawler.data, pre_process_params, multi_process=False,
+                                     label_percentages = [0.00003, 0.0004, 0.0003, 0.004, 0.004, 0.002])
+
+    # generate feature matrix and label vector
+    data_train = np.concatenate([img.feature_matrix[0] for img in images])
+    labels_train = np.concatenate([img.feature_matrix[1] for img in images]).squeeze()
+
+    # store preprocessed images to file
+    file_id = open('data_train_reduced.pckl', 'wb')
+    pickle.dump(data_train, file_id)
     file_id.close()
-
-    file_id = open('labels_train_reduced.pckl', 'rb')
-    labels_train = pickle.load(file_id)
+    file_id = open('labels_train_reduced.pckl', 'wb')
+    pickle.dump(labels_train, file_id)
     file_id.close()
-
-
-    ##########################################
-
-    # perform a grid search over the parameter grid and choose the optimal parameters
-    Cs = [0.001, 1]
-    gammas = [0.001, 1]
-    param_grid = {'C': Cs, 'gamma': gammas}
-    svm_rbf_classifier = model_selection.GridSearchCV(svm.SVC(kernel='rbf'), param_grid, verbose=1)
-
-    data_train_scaled, scaler = util.scale_features(data_train)
-
-    util.print_class_count(labels_train)
-
-
-
-    #svm_rbf_classifier = svm.SVC(kernel= 'rbf', C=0.02, gamma='scale',class_weight='balanced', decision_function_shape='ovo')
-
-    start_time = timeit.default_timer()
-
-    print("start training")
-    svm_rbf_classifier.fit(data_train_scaled, labels_train)
-
-    util.print_feature_importance(svm_rbf_classifier.best_estimator_.coef_)
-
-    #print("importance of features: ", svm_rbf_classifier.best_estimator_.coef_)
-    print("best estimator: ", svm_rbf_classifier.best_estimator_)
-    print("best parameter: ", svm_rbf_classifier.best_params_)
-
-
-    file_id = open('svm_rbf_linear.pckl', 'wb')
-    pickle.dump(svm_rbf_classifier, file_id)
-    file_id.close()
-    file_id = open('scaler_rbf.pckl', 'wb')
-    pickle.dump(scaler, file_id)
-    file_id.close()
-
-    print(' Time elapsed:', timeit.default_timer() - start_time, 's')
-
+    print('-' * 5, 'Preprocessed images stored')
 
 if __name__ == "__main__":
     """The program's entry point."""

@@ -62,7 +62,7 @@ class FeatureExtractor:
         self.intensity_feature = kwargs.get('intensity_feature', False)
         self.gradient_intensity_feature = kwargs.get('gradient_intensity_feature', False)
 
-    def execute(self) -> structure.BrainImage:
+    def execute(self, label_percentages) -> structure.BrainImage:
         """Extracts features from an image.
 
         Returns:
@@ -84,11 +84,11 @@ class FeatureExtractor:
             self.img.feature_images[FeatureImageTypes.T2_GRADIENT_INTENSITY] = \
                 sitk.GradientMagnitude(self.img.images[structure.BrainImageTypes.T2])
 
-        self._generate_feature_matrix()
+        self._generate_feature_matrix(label_percentages)
 
         return self.img
 
-    def _generate_feature_matrix(self):
+    def _generate_feature_matrix(self, label_percentages):
         """Generates a feature matrix."""
 
         mask = None
@@ -101,7 +101,7 @@ class FeatureExtractor:
             # - 1 (white matter)
             # - 2 (grey matter)
             # - 3 (Hippocampus)
-            # - 3 (Amygdala)
+            # - 4 (Amygdala)
             # - 3 (Thalamus)
 
             # you can exclude background voxels from the training mask generation
@@ -111,7 +111,7 @@ class FeatureExtractor:
             mask = fltr_feat.RandomizedTrainingMaskGenerator.get_mask(
                 self.img.images[structure.BrainImageTypes.GroundTruth],
                 [0, 1, 2, 3, 4, 5],
-                [0.0003, 0.004, 0.003, 0.04, 0.04, 0.02])
+                label_percentages)
 
             # convert the mask to a logical array where value 1 is False and value 0 is True
             mask = sitk.GetArrayFromImage(mask)
@@ -160,7 +160,7 @@ class FeatureExtractor:
         return image.reshape((no_voxels, number_of_components))
 
 
-def pre_process(id_: str, paths: dict, **kwargs) -> structure.BrainImage:
+def pre_process(id_: str, paths: dict, label_percentages = [0.0003, 0.004, 0.003, 0.04, 0.04, 0.02], **kwargs) -> structure.BrainImage:
     """Loads and processes an image.
 
     The processing includes:
@@ -225,7 +225,7 @@ def pre_process(id_: str, paths: dict, **kwargs) -> structure.BrainImage:
 
     # extract the features
     feature_extractor = FeatureExtractor(img, **kwargs)
-    img = feature_extractor.execute()
+    img = feature_extractor.execute(label_percentages)
 
     img.feature_images = {}
 
@@ -282,7 +282,7 @@ def init_evaluator(directory: str, result_file_name: str = 'results.csv') -> eva
 
 
 def pre_process_batch(data_batch: t.Dict[structure.BrainImageTypes, structure.BrainImage],
-                      pre_process_params: dict=None, multi_process=True) -> t.List[structure.BrainImage]:
+                      pre_process_params: dict=None, multi_process=True, label_percentages = [0.0003, 0.004, 0.003, 0.04, 0.04, 0.02]) -> t.List[structure.BrainImage]:
     """Loads and pre-processes a batch of images.
 
     The pre-processing includes:
@@ -306,7 +306,7 @@ def pre_process_batch(data_batch: t.Dict[structure.BrainImageTypes, structure.Br
     if multi_process:
         images = mproc.MultiProcessor.run(pre_process, params_list, pre_process_params, mproc.PreProcessingPickleHelper)
     else:
-        images = [pre_process(id_, path, **pre_process_params) for id_, path in params_list]
+        images = [pre_process(id_, path, label_percentages, **pre_process_params) for id_, path in params_list]
     return images
 
 
