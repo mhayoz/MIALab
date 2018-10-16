@@ -85,7 +85,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     util.print_feature_importance(svm_rbf_classifier.best_estimator_.coef_)
 
-    #print("importance of features: ", svm_rbf_classifier.best_estimator_.coef_)
+    print("importance of features: ", svm_rbf_classifier.best_estimator_.coef_)
     print("best estimator: ", svm_rbf_classifier.best_estimator_)
     print("best parameter: ", svm_rbf_classifier.best_params_)
 
