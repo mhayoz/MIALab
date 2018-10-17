@@ -66,7 +66,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     ##########################################
 
     # perform a grid search over the parameter grid and choose the optimal parameters
-    param_grid = {'C': [0.001, 0.01, 1000, 10000, 1000000]}  # grid to search for best parameter C = 0.02
+    param_grid = {'C': [0.001, 0.01, 0.1, 0.5, 1]}  # grid to search for best parameter C = 0.02
     log_reg_classifier = model_selection.GridSearchCV(sk.LogisticRegression(), param_grid, refit=True)
 
     print('abschnitt 1')
