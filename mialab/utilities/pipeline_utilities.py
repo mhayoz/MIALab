@@ -160,7 +160,7 @@ class FeatureExtractor:
         return image.reshape((no_voxels, number_of_components))
 
 
-def pre_process(id_: str, paths: dict, label_percentages = [0.0003, 0.004, 0.003, 0.04, 0.04, 0.02], **kwargs) -> structure.BrainImage:
+def pre_process(id_: str, paths: dict, **kwargs) -> structure.BrainImage:
     """Loads and processes an image.
 
     The processing includes:
@@ -225,7 +225,10 @@ def pre_process(id_: str, paths: dict, label_percentages = [0.0003, 0.004, 0.003
 
     # extract the features
     feature_extractor = FeatureExtractor(img, **kwargs)
-    img = feature_extractor.execute(label_percentages)
+
+    #check wheter label_percentage is in kwargs
+    #'label_percentages' in kwargs
+    img = feature_extractor.execute(kwargs.get('label_percentages', [0.0003, 0.004, 0.003, 0.04, 0.04, 0.02]))
 
     img.feature_images = {}
 
@@ -282,7 +285,7 @@ def init_evaluator(directory: str, result_file_name: str = 'results.csv') -> eva
 
 
 def pre_process_batch(data_batch: t.Dict[structure.BrainImageTypes, structure.BrainImage],
-                      pre_process_params: dict=None, multi_process=True, label_percentages = [0.0003, 0.004, 0.003, 0.04, 0.04, 0.02]) -> t.List[structure.BrainImage]:
+                      pre_process_params: dict=None, multi_process=True) -> t.List[structure.BrainImage]:
     """Loads and pre-processes a batch of images.
 
     The pre-processing includes:
@@ -306,7 +309,7 @@ def pre_process_batch(data_batch: t.Dict[structure.BrainImageTypes, structure.Br
     if multi_process:
         images = mproc.MultiProcessor.run(pre_process, params_list, pre_process_params, mproc.PreProcessingPickleHelper)
     else:
-        images = [pre_process(id_, path, label_percentages, **pre_process_params) for id_, path in params_list]
+        images = [pre_process(id_, path, **pre_process_params) for id_, path in params_list]
     return images
 
 
