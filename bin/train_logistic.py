@@ -82,8 +82,8 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     print('abschnitt 2')
 
     #print("importance of features: ", log_reg_classifier.best_estimator_.coef_)
-    #print("best estimator: ", log_reg_classifier.best_estimator_)
-    #print("best parameter: ", log_reg_classifier.best_params_)
+    print("best estimator: ", log_reg_classifier.best_estimator_)
+    print("best parameter: ", log_reg_classifier.best_params_)
 
 
     # store trained log_regr
