@@ -25,6 +25,7 @@ import mialab.data.structure as structure
 import mialab.utilities.file_access_utilities as futil
 import mialab.utilities.pipeline_utilities as putil
 import sklearn.linear_model as sk
+import util
 
 IMAGE_KEYS = [structure.BrainImageTypes.T1,
               structure.BrainImageTypes.T2,
@@ -65,33 +66,35 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     ##########################################
 
     # perform a grid search over the parameter grid and choose the optimal parameters
-    param_grid = {'C': [0.5, 100, 1000, 10000, 1000000]}  # grid to search for best parameter C = 0.02
+    param_grid = {'C': [0.001, 0.01, 1000, 10000, 1000000]}  # grid to search for best parameter C = 0.02
     log_reg_classifier = model_selection.GridSearchCV(sk.LogisticRegression(), param_grid, refit=True)
 
     print('abschnitt 1')
 
+    data_train_scaled, scaler = util.scale_features(data_train)
+
     start_time = timeit.default_timer()
 
-    log_reg_classifier.fit(data_train, labels_train)
+    log_reg_classifier.fit(data_train_scaled, labels_train)
+
+    util.print_feature_importance(log_reg_classifier.best_estimator_.coef_)
 
     print('abschnitt 2')
 
-    print("importance of features: ", log_reg_classifier.best_estimator_.coef_)
-    print("best estimator: ", log_reg_classifier.best_estimator_)
-    print("best parameter: ", log_reg_classifier.best_params_)
+    #print("importance of features: ", log_reg_classifier.best_estimator_.coef_)
+    #print("best estimator: ", log_reg_classifier.best_estimator_)
+    #print("best parameter: ", log_reg_classifier.best_params_)
 
 
     # store trained log_regr
     file_id = open('log_regr.pckl', 'wb')
     pickle.dump(log_reg_classifier, file_id)
     file_id.close()
+    file_id = open('scaler.pckl', 'wb')
+    pickle.dump(scaler, file_id)
+    file_id.close()
 
     print(' Time elapsed:', timeit.default_timer() - start_time, 's')
-
-    # create a result directory with timestamp
-    t = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-    result_dir = os.path.join(result_dir, t)
-    os.makedirs(result_dir, exist_ok=True)
 
 
 if __name__ == "__main__":
