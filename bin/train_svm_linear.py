@@ -55,12 +55,12 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     print('-' * 5, 'Training...')
 
     # load feature matrix and label vector
-    # precomputed by preprocessAndStore.py
-    file_id = open('data_train.pckl', 'rb')
+    # precomputed by preprocessAndStore.py1057278
+    file_id = open('data_train_reduced.pckl', 'rb')
     data_train = pickle.load(file_id)
     file_id.close()
 
-    file_id = open('labels_train.pckl', 'rb')
+    file_id = open('labels_train_reduced.pckl', 'rb')
     labels_train = pickle.load(file_id)
     file_id.close()
 
