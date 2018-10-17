@@ -227,7 +227,7 @@ def pre_process(id_: str, paths: dict, **kwargs) -> structure.BrainImage:
     feature_extractor = FeatureExtractor(img, **kwargs)
 
     #check wheter label_percentage is in kwargs
-    #'label_percentages' in kwargs
+    # 'label_percentages' in kwargs
     img = feature_extractor.execute(kwargs.get('label_percentages', [0.0003, 0.004, 0.003, 0.04, 0.04, 0.02]))
 
     img.feature_images = {}
