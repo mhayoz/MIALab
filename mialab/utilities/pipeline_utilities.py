@@ -45,6 +45,7 @@ class FeatureImageTypes(enum.Enum):
     T1_GRADIENT_INTENSITY = 3
     T2_INTENSITY = 4
     T2_GRADIENT_INTENSITY = 5
+    #SECOND_ORDER_COORD = 6
 
 
 class FeatureExtractor:
@@ -57,10 +58,12 @@ class FeatureExtractor:
             img (structure.BrainImage): The image to extract features from.
         """
         self.img = img
+        self.add_features = None
         self.training = kwargs.get('training', True)
         self.coordinates_feature = kwargs.get('coordinates_feature', False)
         self.intensity_feature = kwargs.get('intensity_feature', False)
         self.gradient_intensity_feature = kwargs.get('gradient_intensity_feature', False)
+        self.second_order_coordinate_feature = kwargs.get('second_oder_coordinate_feature', False)
 
     def execute(self, label_percentages) -> structure.BrainImage:
         """Extracts features from an image.
@@ -83,6 +86,7 @@ class FeatureExtractor:
                 sitk.GradientMagnitude(self.img.images[structure.BrainImageTypes.T1])
             self.img.feature_images[FeatureImageTypes.T2_GRADIENT_INTENSITY] = \
                 sitk.GradientMagnitude(self.img.images[structure.BrainImageTypes.T2])
+
 
         self._generate_feature_matrix(label_percentages)
 
@@ -121,6 +125,12 @@ class FeatureExtractor:
         data = np.concatenate(
             [self._image_as_numpy_array(image, mask) for id_, image in self.img.feature_images.items()],
             axis=1)
+        # concatenate additional polynomial features (not in sitk image format available)
+        if self.second_order_coordinate_feature:
+            second_order_coordinates = fltr_feat.SecondOrderCoordinates()
+            self.add_features = \
+                second_order_coordinates.execute(data[:, 0:3])
+            data = np.concatenate((data,self.add_features), axis=1)
 
         # generate labels (note that we assume to have a ground truth even for testing)
         labels = self._image_as_numpy_array(self.img.images[structure.BrainImageTypes.GroundTruth], mask)

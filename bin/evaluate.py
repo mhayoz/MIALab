@@ -24,6 +24,7 @@ import mialab.data.structure as structure
 import mialab.utilities.file_access_utilities as futil
 import mialab.utilities.pipeline_utilities as putil
 import util
+from sklearn import preprocessing
 
 IMAGE_KEYS = [structure.BrainImageTypes.T1,
               structure.BrainImageTypes.T2,
@@ -52,7 +53,8 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
                           'registration_pre': False,
                           'coordinates_feature': True,
                           'intensity_feature': True,
-                          'gradient_intensity_feature': True}
+                          'gradient_intensity_feature': True,
+                          'second_oder_coordinate_feature' : True}
 
 
     print('-' * 5, 'Testing...')
@@ -85,7 +87,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     for img in images_test:
         print('-' * 10, 'Testing', img.id_)
-        scaled_features, s = util.scale_features(img.feature_matrix[0],scaler)
+        scaled_features, s = util.scale_features(img.feature_matrix[0], scaler)
         start_time = timeit.default_timer()
         predictions = svm_classifier.predict(scaled_features)
         #probabilities = svm_classifier.predict_proba(img.feature_matrix[0])
