@@ -52,7 +52,8 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
                           'registration_pre': False,
                           'coordinates_feature': True,
                           'intensity_feature': True,
-                          'gradient_intensity_feature': True}
+                          'gradient_intensity_feature': True,
+                          'label_percentages': [0.00003, 0.0004, 0.0003, 0.016, 0.05, 0.01]}
 
 
     print('-' * 5, 'Testing...')
@@ -77,8 +78,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     # load images for testing and pre-process
     pre_process_params['training'] = False
-    images_test = putil.pre_process_batch(crawler.data, pre_process_params, multi_process=False,
-                                          label_percentages=[0.00003, 0.0004, 0.0003, 0.016, 0.05, 0.01])
+    images_test = putil.pre_process_batch(crawler.data, pre_process_params, multi_process=False)
 
     images_prediction = []
     images_probabilities = []
