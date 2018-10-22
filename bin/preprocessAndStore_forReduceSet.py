@@ -57,7 +57,8 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
                           'coordinates_feature': True,
                           'intensity_feature': True,
                           'gradient_intensity_feature': True,
-                          'label_percentages': [0.00001, 0.0002, 0.0001, 0.005, 0.02, 0.004]}
+                          'second_oder_coordinate_feature' : True,
+                          'label_percentages': [0.0003, 0.004, 0.003, 0.04, 0.04, 0.02]}
 
 
     # load images for training and pre-process

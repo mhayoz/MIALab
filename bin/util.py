@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn import preprocessing
 
-feature_key = ['x', 'y', 'z', 'T1 intensity', 'T2 intensity', 'T1 grad', 'T2 grad']
+feature_key = ['x', 'y', 'z', 'T1 intensity', 'T2 intensity', 'T1 grad', 'T2 grad','x^2', 'xy', 'y^2', 'yz', 'z^2', 'xz']
 class_key = ['background', 'white matter', 'grey matter', 'hippocampus', 'amygdala', 'thalamus']
 
 def print_feature_importance(coefficients):
@@ -17,7 +17,6 @@ def print_feature_importance(coefficients):
 
 def scale_features(feature_matrix, scaler=None):
     # scale each feature to zero mean and unit variance
-
     # scale features before training
     if scaler is None:
         scaler = preprocessing.StandardScaler().fit(feature_matrix)

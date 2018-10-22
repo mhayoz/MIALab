@@ -13,6 +13,7 @@ import SimpleITK as sitk
 import sklearn.ensemble as sk_ensemble
 from sklearn import svm
 from sklearn import model_selection
+from sklearn import preprocessing
 import numpy as np
 import pymia.data.conversion as conversion
 import pymia.data.loading as load
@@ -72,6 +73,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     param_grid = {'C': [0.0001, 0.001, 0.01, 0.1, 0.2, 0.5, 0.8, 1]}  # grid to search for best parameter C = 0.02
     #svm_classifier = model_selection.GridSearchCV(svm.LinearSVC(C=1, class_weight='balanced', dual=False), param_grid, verbose=1)
 
+
     data_train_scaled, scaler = util.scale_features(data_train)
 
     util.print_class_count(labels_train)
@@ -80,7 +82,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     # use balanced class weights to include classes with small sample size
     # solve the primal problem since n_features < n_samples
 
-    svm_classifier = svm.LinearSVC(C=0.0001, class_weight='balanced', dual=False)  # probability=False, kernel= 'rbf') #kernel='linear')
+    svm_classifier = svm.LinearSVC(C=1, class_weight='balanced', dual=False)  # probability=False, kernel= 'rbf') #kernel='linear')
     start_time = timeit.default_timer()
 
     svm_classifier.fit(data_train_scaled, labels_train)

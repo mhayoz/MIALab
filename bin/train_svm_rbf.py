@@ -84,7 +84,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     start_time = timeit.default_timer()
 
     print("start training")
-    svm_rbf_classifier.fit(data_train_scaled, labels_train)
+    svm_rbf_classifier.fit(data_train_scaled[:, 0:3], labels_train)
 
     #####svm_rbf_classifier.coef_ can not be used with rbf kernel
     #util.print_feature_importance(svm_rbf_classifier.best_estimator_.coef_)

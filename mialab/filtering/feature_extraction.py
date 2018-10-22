@@ -4,7 +4,17 @@ import sys
 import numpy as np
 import pymia.filtering.filter as fltr
 import SimpleITK as sitk
+from sklearn import preprocessing
 
+class SecondOrderCoordinates:
+    def __init__(self):
+        self.poly = preprocessing.PolynomialFeatures(2, interaction_only=False)
+    def execute(self, coordinates):
+        # compute polynomial terms
+        interaction_terms = self.poly.fit_transform(coordinates)
+        # extract only second order terms
+        interaction_terms = interaction_terms[:, 4:11]
+        return interaction_terms
 
 class AtlasCoordinates(fltr.IFilter):
     """Represents an atlas coordinates feature extractor."""
