@@ -63,12 +63,12 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
 
     ##########################################
-
+    # use if GridSearchCV is used
     # perform a grid search over the parameter grid and choose the optimal parameters
-    #Cs = [4,5,6]
-    #gammas = [0.3, 0.5,0.7]
-    #param_grid = {'C': Cs, 'gamma': gammas}
-    #svm_rbf_classifier = model_selection.GridSearchCV(svm.SVC(kernel='rbf'), param_grid, verbose=1)
+    Cs = [0.01, 0.1, 1, 3, 6, 10]
+    gammas = [0.01, 0.1, 0.5 ,1 ,2 ,3]
+    param_grid = {'C': Cs, 'gamma': gammas}
+    svm_rbf_classifier = model_selection.GridSearchCV(svm.SVC(kernel='rbf'), param_grid, verbose=1)
 
     data_train_scaled, scaler = util.scale_features(data_train)
 
@@ -78,8 +78,9 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     util.print_class_count(labels_train)
 
 
+    # use if GridSearchCV is not used
+    #svm_rbf_classifier = svm.SVC(kernel= 'rbf', C=3, gamma= 0.3 ,class_weight='balanced', decision_function_shape='ovo')
 
-    svm_rbf_classifier = svm.SVC(kernel= 'rbf', C=3, gamma= 0.3 ,class_weight='balanced', decision_function_shape='ovo')
 
     start_time = timeit.default_timer()
 
@@ -91,20 +92,20 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
 
     #use if GridSearchCV is used
-    #print("importance of features: ", svm_rbf_classifier.best_estimator_.coef_)#####svm_rbf_classifier.coef_ can not be used with rbf kernel
-    #print("best estimator: ", svm_rbf_classifier.best_estimator_)
-    #print("best parameter: ", svm_rbf_classifier.best_params_)
+    print("importance of features: ", svm_rbf_classifier.best_estimator_.coef_)#####svm_rbf_classifier.coef_ can not be used with rbf kernel
+    print("best estimator: ", svm_rbf_classifier.best_estimator_)
+    print("best parameter: ", svm_rbf_classifier.best_params_)
 
     #use if GridSearchCV is not used
-    print("best estimator: ", svm_rbf_classifier)
-    print("estimator dual_coef_: ", svm_rbf_classifier.dual_coef_)
+    #print("best estimator: ", svm_rbf_classifier)
+    #print("estimator dual_coef_: ", svm_rbf_classifier.dual_coef_)
 
 
 
-    file_id = open('svm_rbf.pckl', 'wb')
+    file_id = open('svm_rbf_gs.pckl', 'wb')
     pickle.dump(svm_rbf_classifier, file_id)
     file_id.close()
-    file_id = open('scaler_rbf.pckl', 'wb')
+    file_id = open('scaler_rbf_gs.pckl', 'wb')
     pickle.dump(scaler, file_id)
     file_id.close()
 
