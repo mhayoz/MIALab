@@ -47,6 +47,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     print('-' * 5, 'Training...')
 
+
     # crawl the training image directories
     crawler = load.FileSystemDataCrawler(data_train_dir,
                                          IMAGE_KEYS,
