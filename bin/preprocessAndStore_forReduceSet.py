@@ -69,6 +69,11 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     data_train = np.concatenate([img.feature_matrix[0] for img in images])
     labels_train = np.concatenate([img.feature_matrix[1] for img in images]).squeeze()
 
+    # compute sum over all ground truth images
+    Label = putil.LabelImageTypes.AMYGDALA
+    img_summed = util.compute_label_dist(images, Label)
+    # save results
+    sitk.WriteImage(img_summed, os.path.join(result_dir, 'groundtruth_sum_' + Label + '.mha'), True)
 
     #printing out how much labels of each group were taken by the mask
     util.print_class_count(labels_train)
