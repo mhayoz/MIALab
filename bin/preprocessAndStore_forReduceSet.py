@@ -58,7 +58,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
                           'coordinates_feature': True,
                           'intensity_feature': True,
                           'gradient_intensity_feature': True,
-                          'second_oder_coordinate_feature' : True,
+                          'second_oder_coordinate_feature': False,
                           'label_percentages': [0.0005, 0.005, 0.005, 0.05, 0.09, 0.022]}#[0.0003, 0.004, 0.003, 0.04, 0.04, 0.02]}
 
 
