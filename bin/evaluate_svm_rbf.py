@@ -53,6 +53,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
                           'coordinates_feature': True,
                           'intensity_feature': True,
                           'gradient_intensity_feature': True,
+                          'second_oder_coordinate_feature': False,
                           'label_percentages': [0.00003, 0.0004, 0.0003, 0.016, 0.05, 0.01]}
 
 
