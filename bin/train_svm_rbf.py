@@ -65,9 +65,9 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     ##########################################
     # use if GridSearchCV is used
     # perform a grid search over the parameter grid and choose the optimal parameters
-    Cs = [0.01, 0.1, 1, 3, 6, 10]
-    gammas = [0.01, 0.1, 0.5 ,1 ,2 ,3]
-    param_grid = {'C': Cs, 'gamma': gammas}
+    Cs = [0.01, 0.1, 1, 3, 6, 10]#a list
+    gammas = [0.01, 0.1, 0.5 ,1 ,2 ,3]#a list
+    param_grid = {'C': Cs, 'gamma': gammas}#a dictionary
     svm_rbf_classifier = model_selection.GridSearchCV(svm.SVC(kernel='rbf'), param_grid, verbose=1)
 
     data_train_scaled, scaler = util.scale_features(data_train)
