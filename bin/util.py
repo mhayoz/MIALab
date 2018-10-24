@@ -1,5 +1,8 @@
 import numpy as np
 from sklearn import preprocessing
+import mialab.utilities.pipeline_utilities as putil
+import mialab.data.structure as structure
+import SimpleITK as sitk
 
 feature_key = ['x', 'y', 'z', 'T1 intensity', 'T2 intensity', 'T1 grad', 'T2 grad','x^2', 'xy', 'y^2', 'yz', 'z^2', 'xz']
 class_key = ['background', 'white matter', 'grey matter', 'hippocampus', 'amygdala', 'thalamus']
@@ -30,3 +33,19 @@ def print_class_count(labels):
     print('Number of Samples in Class')
     for i, cls in enumerate(class_key):
         print(cls, ": ", count[i])
+
+
+def compute_label_dist(images: sitk.Image, label: putil.LabelImageTypes) -> sitk.Image:
+    # compute the sum over all images of a single label to asses the distribution in coordination features
+    x, y, z = images[0].images[structure.BrainImageTypes.GroundTruth].GetSize()
+    ground_truth_sum = np.zeros((x, y, z))
+    for img in images:
+        # get ground truth from image
+        ground_truth = sitk.GetArrayFromImage(img.images[structure.BrainImageTypes.GroundTruth])
+        # set all labels other than Amygdala to 0
+        ground_truth[ground_truth != label] = 0
+        # sum up over all images
+        ground_truth_sum = ground_truth_sum + ground_truth
+
+    img_out = sitk.GetImageFromArray(ground_truth_sum)
+    img_out.CopyInformation(images[0].images[structure.BrainImageTypes.GroundTruth])

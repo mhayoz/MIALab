@@ -48,6 +48,15 @@ class FeatureImageTypes(enum.Enum):
     #SECOND_ORDER_COORD = 6
 
 
+class LabelImageTypes(enum.Enum):
+    """Represents label image types."""
+    BACKGROUND = 0
+    WHITE_MATTER = 2
+    GREY_MATTER = 3
+    HIPPOCAMPUS = 4
+    AMYGDALA = 5
+    THALAMUS = 6
+
 class FeatureExtractor:
     """Represents a feature extractor."""
 
