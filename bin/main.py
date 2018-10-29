@@ -7,7 +7,7 @@ import datetime
 import os
 import sys
 import timeit
-
+import pickle
 import SimpleITK as sitk
 import sklearn.ensemble as sk_ensemble
 import numpy as np
@@ -56,16 +56,33 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
                           'registration_pre': False,
                           'coordinates_feature': True,
                           'intensity_feature': True,
-                          'gradient_intensity_feature': True}
+                          'gradient_intensity_feature': True,
+                          'second_oder_coordinate_feature': False,
+                          'label_percentages': [0.0005, 0.005, 0.005, 0.05, 0.09, 0.022]}
 
     # load images for training and pre-process
-    images = putil.pre_process_batch(crawler.data, pre_process_params, multi_process=False)
+    #images = putil.pre_process_batch(crawler.data, pre_process_params, multi_process=False)
 
     # generate feature matrix and label vector
-    data_train = np.concatenate([img.feature_matrix[0] for img in images])
-    labels_train = np.concatenate([img.feature_matrix[1] for img in images]).squeeze()
+    #data_train = np.concatenate([img.feature_matrix[0] for img in images])
+    #labels_train = np.concatenate([img.feature_matrix[1] for img in images]).squeeze()
 
-    forest = sk_ensemble.RandomForestClassifier(max_features=images[0].feature_matrix[0].shape[1],
+    # load feature matrix and label vector
+    # precomputed by preprocessAndStore.py
+    file_id = open('data_train.pckl', 'rb')
+    data_train = pickle.load(file_id)
+    file_id.close()
+
+    file_id = open('labels_train.pckl', 'rb')
+    labels_train = pickle.load(file_id)
+    file_id.close()
+
+    #use this when images are processed in this script
+    #forest = sk_ensemble.RandomForestClassifier(max_features=images[0].feature_matrix[0].shape[1],
+    #                                            n_estimators=20,
+    #                                            max_depth=25)
+    #use this when data is loaded
+    forest = sk_ensemble.RandomForestClassifier(max_features=data_train.shape[1],
                                                 n_estimators=20,
                                                 max_depth=25)
 
