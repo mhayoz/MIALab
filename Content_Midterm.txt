@@ -1,0 +1,5 @@
+- Approach (SVM linear <-> logistic regression, random forest <-> SVM rbf) (SVM linear (7 features / polynomial), parameter tuning, balance of training examples per class (smaller structures are relatively more weighted), feature scaling)
+- Progress (overview results)
+- Challenges (approach-specific, )
+- Insights (diff. label weights, param. search, DICE)
+- Plan for the rest of the semester (different approaches (nearest neighbor), parameter tuning, better evaluation metric? (Hausdorf), evaluate on more patients to check consistency)
