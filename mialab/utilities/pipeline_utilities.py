@@ -45,7 +45,7 @@ class FeatureImageTypes(enum.Enum):
     T1_GRADIENT_INTENSITY = 3
     T2_INTENSITY = 4
     T2_GRADIENT_INTENSITY = 5
-    #SECOND_ORDER_COORD = 6
+    SECOND_ORDER_COORD = 6
 
 
 class LabelImageTypes(enum.Enum):
@@ -95,7 +95,6 @@ class FeatureExtractor:
                 sitk.GradientMagnitude(self.img.images[structure.BrainImageTypes.T1])
             self.img.feature_images[FeatureImageTypes.T2_GRADIENT_INTENSITY] = \
                 sitk.GradientMagnitude(self.img.images[structure.BrainImageTypes.T2])
-
 
         self._generate_feature_matrix(label_percentages)
 
