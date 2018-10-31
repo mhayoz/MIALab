@@ -50,3 +50,4 @@ def compute_label_dist(images: sitk.Image, label: putil.LabelImageTypes) -> sitk
     ground_truth_sum/label
     img_out = sitk.GetImageFromArray(ground_truth_sum)
     img_out.CopyInformation(images[0].images[structure.BrainImageTypes.GroundTruth])
+    return img_out

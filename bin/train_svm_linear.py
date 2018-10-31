@@ -70,9 +70,8 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
 
     # perform a grid search over the parameter grid and choose the optimal parameters
-    param_grid = {'C': [0.0001, 0.001, 0.01, 0.1, 0.2, 0.5, 0.8, 1]}  # grid to search for best parameter C = 0.02
+    param_grid = {'C': [ 2, 3, 4, 5, 10, 20, 100]}  # grid to search for best parameter C = 0.02
     #svm_classifier = model_selection.GridSearchCV(svm.LinearSVC(C=1, class_weight='balanced', dual=False), param_grid, verbose=1)
-
 
     data_train_scaled, scaler = util.scale_features(data_train)
 
@@ -87,7 +86,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     svm_classifier.fit(data_train_scaled, labels_train)
 
-    util.print_feature_importance(svm_classifier.coef_)
+    #util.print_feature_importance(svm_classifier.coef_)
 
     #print(svm_classifier.best_params_)
     #print(svm_classifier.best_estimator_)

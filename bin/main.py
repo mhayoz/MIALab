@@ -181,5 +181,26 @@ if __name__ == "__main__":
         help='Directory with testing data.'
     )
 
+    parser.add_argument(
+        '--ml_method',
+        type=str,
+        default='random_forest',
+        help='ML learning algorithm for segmentation'
+    )
+
+    parser.add_argument(
+        '--save_intermediate_results',
+        type=bool,
+        default=False,
+        help='Save intermediate results as .pckl objects'
+    )
+
+    parser.add_argument(
+        '--preprocessed_img_file',
+        type=str,
+        default=None,
+        help='If not None, it skips preprocessing and loads instead the stored images in a .pckl file'
+    )
+
     args = parser.parse_args()
     main(args.result_dir, args.data_atlas_dir, args.data_train_dir, args.data_test_dir)
