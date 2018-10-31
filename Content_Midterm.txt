@@ -2,4 +2,4 @@
 - Progress (overview results)
 - Challenges (approach-specific, )
 - Insights (diff. label weights, param. search, DICE)
-- Plan for the rest of the semester (evtl. nearest neighbor, parameter tuning, better evaluation? (Hausdorf))
+- Plan for the rest of the semester (different approaches (nearest neighbor), parameter tuning, better evaluation metric? (Hausdorf), evaluate on more patients to check consistency)
