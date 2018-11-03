@@ -54,17 +54,17 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
                           'intensity_feature': True,
                           'gradient_intensity_feature': True,
                           'second_oder_coordinate_feature': False,
-                          'label_percentages': [0.0005, 0.005, 0.005, 0.05, 0.09, 0.022]}
+                          'label_percentages': [0.0003, 0.004, 0.003, 0.04, 0.04, 0.02]}#[0.0005, 0.005, 0.005, 0.05, 0.09, 0.022]}
 
 
     print('-' * 5, 'Testing...')
 
     # load classifier
-    file_id = open('svm_rbf.pckl', 'rb')
+    file_id = open('svm_rbf_fullset.pckl', 'rb')
     svm_rbf_classifier = pickle.load(file_id)
     file_id.close()
 
-    file_id = open('scaler_rbf.pckl', 'rb')
+    file_id = open('scaler_rbf_fullset.pckl', 'rb')
     scaler = pickle.load(file_id)
     file_id.close()
 
@@ -116,7 +116,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     #                       img.id_ + '-PP')
 
         # save results
-        sitk.WriteImage(images_prediction[i], os.path.join(result_dir, images_test[i].id_ + '_SEG.mha'), True)
+        sitk.WriteImage(images_prediction[i], os.path.join(result_dir, images_test[i].id_ + '_SEG_SVM_fullset.mha'), True)
      #   sitk.WriteImage(images_post_processed[i], os.path.join(result_dir, images_test[i].id_ + '_SEG-PP.mha'), True)
 
 

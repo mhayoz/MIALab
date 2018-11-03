@@ -53,11 +53,11 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     # load feature matrix and label vector
     # precomputed by preprocessAndStore.py
-    file_id = open('data_train_reduced.pckl', 'rb')
+    file_id = open('data_train.pckl', 'rb')
     data_train = pickle.load(file_id)
     file_id.close()
 
-    file_id = open('labels_train_reduced.pckl', 'rb')
+    file_id = open('labels_train.pckl', 'rb')
     labels_train = pickle.load(file_id)
     file_id.close()
 
@@ -79,7 +79,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
 
     # use if GridSearchCV is not used
-    svm_rbf_classifier = svm.SVC(kernel= 'rbf', C=15, gamma= 10 ,class_weight='balanced', decision_function_shape='ovo')
+    svm_rbf_classifier = svm.SVC(kernel= 'rbf', C=15, gamma= 5 ,class_weight='balanced', decision_function_shape='ovo')
 
 
     start_time = timeit.default_timer()
@@ -103,10 +103,10 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
 
 
-    file_id = open('svm_rbf.pckl', 'wb')
+    file_id = open('svm_rbf_fullset.pckl', 'wb')
     pickle.dump(svm_rbf_classifier, file_id)
     file_id.close()
-    file_id = open('scaler_rbf.pckl', 'wb')
+    file_id = open('scaler_rbf_fullset.pckl', 'wb')
     pickle.dump(scaler, file_id)
     file_id.close()
 
