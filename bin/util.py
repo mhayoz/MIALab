@@ -3,6 +3,7 @@ from sklearn import preprocessing
 import mialab.utilities.pipeline_utilities as putil
 import mialab.data.structure as structure
 import SimpleITK as sitk
+import matplotlib.pyplot as plt
 
 feature_key = ['x', 'y', 'z', 'T1 intensity', 'T2 intensity', 'T1 grad', 'T2 grad','x^2', 'xy', 'y^2', 'yz', 'z^2', 'xz']
 class_key = ['background', 'white matter', 'grey matter', 'hippocampus', 'amygdala', 'thalamus']
@@ -17,6 +18,19 @@ def print_feature_importance(coefficients):
         print(cls, ":")
         print([feature_key[j] for j in ranking[i, :]])
 
+def plot_feature_importance(coefficients):
+    coefficients = np.sort(abs(coefficients), axis=1)
+    coefficients = np.flip(coefficients)
+    #print('Importance of features (important -> unimportant)')
+    plt.interactive(False)
+    xx = np.arange(0, len(coefficients), 1)
+    for i, cls in enumerate(class_key):
+        plt.subplot(1, len(class_key), i+1)
+        plt.bar(xx, coefficients[:, i])
+        plt.title(cls)
+        #print(cls, ":")
+        #print([feature_key[j] for j in ranking[i, :]])
+    plt.show()
 
 def scale_features(feature_matrix, scaler=None):
     # scale each feature to zero mean and unit variance
