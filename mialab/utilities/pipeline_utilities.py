@@ -298,7 +298,8 @@ def init_evaluator(directory: str, result_file_name: str = 'results.csv') -> eva
     evaluator.add_label(3, "Hippocampus")
     evaluator.add_label(4, "Amygdala")
     evaluator.add_label(5, "Thalamus")
-    evaluator.metrics = [metric.DiceCoefficient()]
+    evaluator.add_metric(metric.DiceCoefficient())
+    evaluator.add_metric(metric.Specificity())
     return evaluator
 
 
