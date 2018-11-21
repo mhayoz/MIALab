@@ -19,6 +19,8 @@ import pymia.data.conversion as conversion
 import pymia.data.loading as load
 import util
 
+import matplotlib.rcsetup as rcsetup
+print(rcsetup.all_backends)
 import matplotlib.pyplot as plt
 import scipy
 
