@@ -19,10 +19,6 @@ import pymia.data.conversion as conversion
 import pymia.data.loading as load
 import util
 
-import matplotlib.rcsetup as rcsetup
-print(rcsetup.all_backends)
-import matplotlib.pyplot as plt
-import scipy
 
 sys.path.insert(0, os.path.join(os.path.dirname(sys.argv[0]), '..'))  # append the MIALab root directory to Python path
 # fixes the ModuleNotFoundError when executing main.py in the console after code changes (e.g. git pull)
@@ -78,9 +74,6 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     data_train_scaled, scaler = util.scale_features(data_train)
 
     util.print_class_count(labels_train)
-
-    x = np.arange(1,10,1)
-    plt.plot(x, x)
 
     # use balanced class weights to include classes with small sample size
     # solve the primal problem since n_features < n_samples
