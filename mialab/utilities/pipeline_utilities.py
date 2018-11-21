@@ -300,6 +300,8 @@ def init_evaluator(directory: str, result_file_name: str = 'results.csv') -> eva
     evaluator.add_label(5, "Thalamus")
     evaluator.add_metric(metric.DiceCoefficient())
     evaluator.add_metric(metric.Specificity())
+    evaluator.add_metric(metric.Sensitivity())
+
     return evaluator
 
 
