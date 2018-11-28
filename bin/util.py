@@ -34,9 +34,10 @@ def plot_feature_importance(coefficients):
         labels = []
         for j in range(len(xx)):
             labels.append(feature_key[idx[i, j]])
-        plt.xticks(xx, tuple(labels))
+        plt.xticks(xx, tuple(labels), rotation='vertical')
         plt.ylabel('absolute value of coefficient')
-
+        # Tweak spacing to prevent clipping of tick-labels
+        plt.subplots_adjust(bottom=0.2)
         plt.savefig('mia-result/coeff_'+cls)
         #print(cls, ":")
         #print([feature_key[j] for j in ranking[i, :]])

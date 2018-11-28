@@ -96,6 +96,8 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
         #probabilities = forest.predict_proba(img.feature_matrix[0])
         print(' Time elapsed:', timeit.default_timer() - start_time, 's')
 
+
+
         # convert prediction and probabilities back to SimpleITK images
         image_prediction = conversion.NumpySimpleITKImageBridge.convert(predictions.astype(np.uint8),
                                                                         img.image_properties)
