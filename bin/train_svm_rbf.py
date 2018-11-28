@@ -79,7 +79,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
 
     # use if GridSearchCV is not used
-    svm_rbf_classifier = svm.SVC(kernel= 'rbf', C=15, gamma= 5 ,class_weight='balanced', decision_function_shape='ovo')
+    svm_rbf_classifier = svm.SVC(kernel= 'rbf', C=15, gamma= 10 ,class_weight='balanced', decision_function_shape='ovo')
 
 
     start_time = timeit.default_timer()
@@ -103,10 +103,10 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
 
 
-    file_id = open('svm_rbf_fullset.pckl', 'wb')
+    file_id = open('svm_rbf_fullset_C15_G10.pckl', 'wb')
     pickle.dump(svm_rbf_classifier, file_id)
     file_id.close()
-    file_id = open('scaler_rbf_fullset.pckl', 'wb')
+    file_id = open('scaler_rbf_fullset_C15_G10.pckl', 'wb')
     pickle.dump(scaler, file_id)
     file_id.close()
 
