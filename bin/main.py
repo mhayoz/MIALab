@@ -7,12 +7,12 @@ import datetime
 import os
 import sys
 import timeit
-import pickle
 import SimpleITK as sitk
 import sklearn.ensemble as sk_ensemble
 import numpy as np
 import pymia.data.conversion as conversion
 import pymia.data.loading as load
+from sklearn import svm, linear_model
 
 sys.path.insert(0, os.path.join(os.path.dirname(sys.argv[0]), '..'))  # append the MIALab root directory to Python path
 # fixes the ModuleNotFoundError when executing main.py in the console after code changes (e.g. git pull)
@@ -21,13 +21,14 @@ sys.path.insert(0, os.path.join(os.path.dirname(sys.argv[0]), '..'))  # append t
 import mialab.data.structure as structure
 import mialab.utilities.file_access_utilities as futil
 import mialab.utilities.pipeline_utilities as putil
+import util
 
 IMAGE_KEYS = [structure.BrainImageTypes.T1,
               structure.BrainImageTypes.T2,
               structure.BrainImageTypes.GroundTruth]  # the list of images we will load
 
 
-def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_dir: str):
+def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_dir: str, ml_method: str, verbose: bool):
     """Brain tissue segmentation using decision forests.
 
     The main routine executes the medical image analysis pipeline:
@@ -45,7 +46,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     # load atlas images
     putil.load_atlas_images(data_atlas_dir)
 
-    print('-' * 5, 'Training...')
+    print('-' * 5, 'Training '+ ml_method + '...')
 
     # crawl the training image directories
     crawler = load.FileSystemDataCrawler(data_train_dir,
@@ -61,39 +62,51 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
                           'label_percentages': [0.0005, 0.005, 0.005, 0.05, 0.09, 0.022]}
 
     # load images for training and pre-process
-    #images = putil.pre_process_batch(crawler.data, pre_process_params, multi_process=False)
+    images = putil.pre_process_batch(crawler.data, pre_process_params, multi_process=False)
 
     # generate feature matrix and label vector
-    #data_train = np.concatenate([img.feature_matrix[0] for img in images])
-    #labels_train = np.concatenate([img.feature_matrix[1] for img in images]).squeeze()
+    data_train = np.concatenate([img.feature_matrix[0] for img in images])
+    labels_train = np.concatenate([img.feature_matrix[1] for img in images]).squeeze()
 
-    # load feature matrix and label vector
-    # precomputed by preprocessAndStore.py
-    file_id = open('data_train.pckl', 'rb')
-    data_train = pickle.load(file_id)
-    file_id.close()
-
-    file_id = open('labels_train.pckl', 'rb')
-    labels_train = pickle.load(file_id)
-    file_id.close()
-
-    #use this when images are processed in this script
-    #forest = sk_ensemble.RandomForestClassifier(max_features=images[0].feature_matrix[0].shape[1],
-    #                                            n_estimators=20,
-    #                                            max_depth=25)
-    #use this when data is loaded
-    forest = sk_ensemble.RandomForestClassifier(max_features=data_train.shape[1],
-                                                n_estimators=20,
-                                                max_depth=25)
+    if verbose:
+        util.print_class_count(labels_train)
 
     start_time = timeit.default_timer()
-    forest.fit(data_train, labels_train)
+    if ml_method == 'random_forest':
+        classifier = sk_ensemble.RandomForestClassifier(max_features=images[0].feature_matrix[0].shape[1],
+                                                    n_estimators=20,
+                                                    max_depth=25)
+        data_train_scaled = data_train # do not scale features to keep original RF
+    elif ml_method == 'svm_linear':
+        classifier = svm.LinearSVC(C=1, class_weight='balanced', dual=False)
+        data_train_scaled, scaler = util.scale_features(data_train)
+    elif ml_method == 'svm_rbf':
+        classifier = svm.SVC(kernel='rbf', C=15, gamma=5, class_weight='balanced',
+                                     decision_function_shape='ovo')
+        data_train_scaled, scaler = util.scale_features(data_train)
+
+    elif ml_method == 'logistic_regression':
+        classifier = linear_model.LogisticRegression(class_weight='balanced')
+        data_train_scaled, scaler = util.scale_features(data_train)
+    else:
+        assert False, "No valid segmentation algorithm selected in argument ml_method"
+
+    classifier.fit(data_train_scaled, labels_train)
     print(' Time elapsed:', timeit.default_timer() - start_time, 's')
 
     # create a result directory with timestamp
     t = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
     result_dir = os.path.join(result_dir, t)
     os.makedirs(result_dir, exist_ok=True)
+
+    # print and plot feature importance for each structure
+    if verbose:
+        if ml_method == 'svm_linear':
+            util.print_feature_importance(classifier.coef_)
+            util.plot_feature_importance(classifier.coef_, result_dir)
+        if ml_method == 'random_forest':
+            util.print_feature_importance(classifier.feature_importances_)
+            util.plot_feature_importance(classifier.feature_importances_, result_dir)
 
     print('-' * 5, 'Testing...')
 
@@ -117,8 +130,14 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
         print('-' * 10, 'Testing', img.id_)
 
         start_time = timeit.default_timer()
-        predictions = forest.predict(img.feature_matrix[0])
-        probabilities = forest.predict_proba(img.feature_matrix[0])
+        if ml_method == 'random_forest':
+            scaled_features = img.feature_matrix[0]
+        else:
+            scaled_features, s = util.scale_features(img.feature_matrix[0], scaler)
+
+
+        predictions = classifier.predict(scaled_features)
+        probabilities = classifier.predict_proba(scaled_features)
         print(' Time elapsed:', timeit.default_timer() - start_time, 's')
 
         # convert prediction and probabilities back to SimpleITK images
@@ -189,18 +208,11 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        '--save_intermediate_results',
+        '--verbose',
         type=bool,
-        default=False,
-        help='Save intermediate results as .pckl objects'
-    )
-
-    parser.add_argument(
-        '--preprocessed_img_file',
-        type=str,
-        default=None,
-        help='If not None, it skips preprocessing and loads instead the stored images in a .pckl file'
+        default=True,
+        help='Enable prints and plots.'
     )
 
     args = parser.parse_args()
-    main(args.result_dir, args.data_atlas_dir, args.data_train_dir, args.data_test_dir)
+    main(args.result_dir, args.data_atlas_dir, args.data_train_dir, args.data_test_dir, args.ml_method, args.verbose)
