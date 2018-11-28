@@ -103,10 +103,10 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
 
 
-    file_id = open('svm_rbf_fullset.pckl', 'wb')
+    file_id = open('svm_rbf_fullset_C15_G5.pckl', 'wb')
     pickle.dump(svm_rbf_classifier, file_id)
     file_id.close()
-    file_id = open('scaler_rbf_fullset.pckl', 'wb')
+    file_id = open('scaler_rbf_fullset_C15_G5.pckl', 'wb')
     pickle.dump(scaler, file_id)
     file_id.close()
 
