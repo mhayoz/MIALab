@@ -3,18 +3,15 @@
 The pipeline is used for brain tissue segmentation using a decision forest classifier.
 """
 import argparse
-import datetime
 import os
 import sys
-import timeit
 
 import pickle
 import SimpleITK as sitk
 import sklearn.ensemble as sk_ensemble
-from sklearn import svm
 import numpy as np
-import pymia.data.conversion as conversion
 import pymia.data.loading as load
+import matplotlib as plt
 
 sys.path.insert(0, os.path.join(os.path.dirname(sys.argv[0]), '..'))  # append the MIALab root directory to Python path
 # fixes the ModuleNotFoundError when executing main.py in the console after code changes (e.g. git pull)
@@ -75,19 +72,23 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     # save results
     sitk.WriteImage(img_summed, os.path.join(result_dir, 'groundtruth_sum_' + Label.name + '.mha'), True)
 
-    #printing out how much labels of each group were taken by the mask
-    util.print_class_count(labels_train)
-
-
 
     # store preprocessed images to file
-    file_id = open('data_train_reduced.pckl', 'wb')
+    file_id = open('data_train_reduced2.pckl', 'wb')
     pickle.dump(data_train, file_id)
     file_id.close()
     file_id = open('labels_train_reduced.pckl', 'wb')
     pickle.dump(labels_train, file_id)
     file_id.close()
     print('-' * 5, 'Preprocessed images stored')
+
+    # n, m = img_summed.shape
+    # x = np.arange(0, n-1, 1)
+    # y = np.arange(0, m-1, 1)
+    # meshgrid = np.meshgrid(x,y, sparse=False)
+    # plt.pyplot.contour(meshgrid, img_summed)
+    #printing out how much labels of each group were taken by the mask
+    util.print_class_count(labels_train)
 
 if __name__ == "__main__":
     """The program's entry point."""

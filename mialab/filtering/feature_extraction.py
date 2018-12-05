@@ -13,7 +13,7 @@ class SecondOrderCoordinates:
         # compute polynomial terms
         interaction_terms = self.poly.fit_transform(coordinates)
         # extract only second order terms
-        interaction_terms = interaction_terms[:, 4:11]
+        interaction_terms = interaction_terms[:, 4:]
         return interaction_terms
 
 class AtlasCoordinates(fltr.IFilter):
