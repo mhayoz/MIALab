@@ -57,7 +57,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
                           'intensity_feature': True,
                           'gradient_intensity_feature': True,
                           'second_oder_coordinate_feature': False,
-                          'label_percentages': [0.0003, 0.004, 0.003, 0.04, 0.04, 0.02]}
+                          'label_percentages': [0.003, 0.04, 0.03, 0.4, 0.4, 0.2]}
 
     # load images for training and pre-process
     images = putil.pre_process_batch(crawler.data, pre_process_params, multi_process=False)
@@ -67,10 +67,10 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     labels_train = np.concatenate([img.feature_matrix[1] for img in images]).squeeze()
 
     # store preprocessed images to file
-    file_id = open('data_train.pckl', 'wb')
+    file_id = open('data_train_lotofpointspersample.pckl', 'wb')
     pickle.dump(data_train, file_id)
     file_id.close()
-    file_id = open('labels_train.pckl', 'wb')
+    file_id = open('labels_train_lotofpointspersample.pckl', 'wb')
     pickle.dump(labels_train, file_id)
     file_id.close()
     print('-' * 5, 'Preprocessed images stored')

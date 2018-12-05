@@ -53,11 +53,11 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
     # load feature matrix and label vector
     # precomputed by preprocessAndStore.py
-    file_id = open('data_train.pckl', 'rb')
+    file_id = open('data_train_lotofpointspersample.pckl', 'rb')
     data_train = pickle.load(file_id)
     file_id.close()
 
-    file_id = open('labels_train.pckl', 'rb')
+    file_id = open('labels_train_lotofpointspersample.pckl', 'rb')
     labels_train = pickle.load(file_id)
     file_id.close()
 
@@ -66,7 +66,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     # use if GridSearchCV is used
     # perform a grid search over the parameter grid and choose the optimal parameters
     #Cs = [10, 12, 15, 20]#a list best = 15
-    #gammas = [1 ,2 ,3, 5,10]#a list best = 10
+    #gammas = [1 ,2 ,3, 5,10]#a list best = 5
     #param_grid = {'C': Cs, 'gamma': gammas}#a dictionary
     #svm_rbf_classifier = model_selection.GridSearchCV(svm.SVC(kernel='rbf'), param_grid, verbose=1)
 
@@ -79,7 +79,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
 
     # use if GridSearchCV is not used
-    svm_rbf_classifier = svm.SVC(kernel= 'rbf', C=15, gamma= 10 ,class_weight='balanced', decision_function_shape='ovo')
+    svm_rbf_classifier = svm.SVC(kernel= 'rbf', C=15, gamma= 5 ,class_weight='balanced', decision_function_shape='ovo')
 
 
     start_time = timeit.default_timer()
@@ -103,10 +103,10 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
 
 
-    file_id = open('svm_rbf_fullset_C15_G10.pckl', 'wb')
+    file_id = open('svm_rbf_fullset_C15_G5_lotofpointspersample.pckl', 'wb')
     pickle.dump(svm_rbf_classifier, file_id)
     file_id.close()
-    file_id = open('scaler_rbf_fullset_C15_G10.pckl', 'wb')
+    file_id = open('scaler_rbf_fullset_C15_G5_lotofpointspersample.pckl', 'wb')
     pickle.dump(scaler, file_id)
     file_id.close()
 

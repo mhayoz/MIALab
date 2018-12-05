@@ -60,11 +60,11 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     print('-' * 5, 'Testing...')
 
     # load classifier
-    file_id = open('svm_rbf_fullset_C15_G10.pckl', 'rb')
+    file_id = open('svm_rbf_fullset_C15_G5_lotofpointspersample.pckl', 'rb')
     svm_rbf_classifier = pickle.load(file_id)
     file_id.close()
 
-    file_id = open('scaler_rbf_fullset_C15_G10.pckl', 'rb')
+    file_id = open('scaler_rbf_fullset_C15_G5_lotofpointspersample.pckl', 'rb')
     scaler = pickle.load(file_id)
     file_id.close()
 
@@ -116,7 +116,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
     #                       img.id_ + '-PP')
 
         # save results
-        sitk.WriteImage(images_prediction[i], os.path.join(result_dir, images_test[i].id_ + '_SEG_SVM_fullset_C15_G10.mha'), True)
+        sitk.WriteImage(images_prediction[i], os.path.join(result_dir, images_test[i].id_ + '_SEG_SVM_fullset_C15-_G5_lotofpointspersample.mha'), True)
      #   sitk.WriteImage(images_post_processed[i], os.path.join(result_dir, images_test[i].id_ + '_SEG-PP.mha'), True)
 
 
