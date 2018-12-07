@@ -68,7 +68,7 @@ data_SNSVTY = [WhiteMatter_SNSVTY, GreyMatter_SNSVTY, Hippocampus_SNSVTY, Amygal
 
 fig, ax = plt.subplots(3,1)
 fig.canvas.set_window_title('SVM with rbf kernel evaluation')
-fig.subplots_adjust(left=0.1, right=0.95, top=0.9, bottom=0.1,  hspace = 0.5 )
+fig.subplots_adjust(left=0.1, right=0.95, top=0.9, bottom=0.1,  hspace = 0.6 )
 
 
 
@@ -84,7 +84,7 @@ ax[0].yaxis.grid(True, linestyle='-', which='major', color='lightgrey',
                alpha=0.5)
 # Hide these grid behind plot objects
 ax[0].set_axisbelow(True)
-ax[0].set_title('Evaluation result on the full test set')
+ax[0].set_title('Results for Dice Coefficient')
 #ax[0].set_xlabel('Label')
 ax[0].set_ylabel('Dice Coefficient')
 
@@ -108,7 +108,7 @@ ax[1].yaxis.grid(True, linestyle='-', which='major', color='lightgrey',
 
 # Hide these grid behind plot objects
 ax[1].set_axisbelow(True)
-#ax[1].set_title('...')
+ax[1].set_title('Results for Specificity')
 #ax[1].set_xlabel('Label')
 ax[1].set_ylabel('Specificity')
 
@@ -132,7 +132,7 @@ ax[2].yaxis.grid(True, linestyle='-', which='major', color='lightgrey',
 
 # Hide these grid behind plot objects
 ax[2].set_axisbelow(True)
-#ax[2].set_title('...')
+ax[2].set_title('Results for Sensitivity')
 #ax[2].set_xlabel('Label')
 ax[2].set_ylabel('Sensitivity')
 
