@@ -114,7 +114,7 @@ ax[1].set_ylabel('Specificity')
 
 # Set the axes ranges and axes labels
 ax[1].set_xlim(0.5, numOfClasses + 0.5)
-ax[1].set_ylim(0.8, 1)
+ax[1].set_ylim(0, 1)
 ax[1].set_xticklabels(classnames, rotation=0, fontsize=8)
 
 
@@ -138,7 +138,7 @@ ax[2].set_ylabel('Sensitivity')
 
 # Set the axes ranges and axes labels
 ax[2].set_xlim(0.5, numOfClasses + 0.5)
-ax[2].set_ylim(0.8, 1)
+ax[2].set_ylim(0, 1)
 ax[2].set_xticklabels(classnames, rotation=0, fontsize=8)
 
 
