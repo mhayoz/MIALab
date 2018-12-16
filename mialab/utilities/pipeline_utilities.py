@@ -51,11 +51,11 @@ class FeatureImageTypes(enum.Enum):
 class LabelImageTypes(enum.Enum):
     """Represents label image types."""
     BACKGROUND = 0
-    WHITE_MATTER = 2
-    GREY_MATTER = 3
-    HIPPOCAMPUS = 4
-    AMYGDALA = 5
-    THALAMUS = 6
+    WHITE_MATTER = 1
+    GREY_MATTER = 2
+    HIPPOCAMPUS = 3
+    AMYGDALA = 4
+    THALAMUS = 5
 
 class FeatureExtractor:
     """Represents a feature extractor."""

@@ -92,11 +92,11 @@ def compute_label_dist(images: sitk.Image, label: putil.LabelImageTypes) -> sitk
         # get ground truth from image
         ground_truth = sitk.GetArrayFromImage(img.images[structure.BrainImageTypes.GroundTruth])
         # set all labels other than Amygdala to 0
-        ground_truth[ground_truth != label] = 0
+        ground_truth[ground_truth != label.value] = 0
         # sum up over all images
         ground_truth_sum = ground_truth_sum + ground_truth
 
-    ground_truth_sum/ label.value
+    #ground_truth_sum/ label.value
     img_out = sitk.GetImageFromArray(ground_truth_sum)
     img_out.CopyInformation(images[0].images[structure.BrainImageTypes.GroundTruth])
     return img_out
