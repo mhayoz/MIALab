@@ -78,7 +78,7 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
                                                     max_depth=25)
         data_train_scaled = data_train # do not scale features to keep original RF
     elif ml_method == 'svm_linear':
-        classifier = svm.LinearSVC(C=1, class_weight='balanced', dual=False)
+        classifier = svm.SVC(kernel='linear', C=1, class_weight='balanced')
         data_train_scaled, scaler = util.scale_features(data_train)
     elif ml_method == 'svm_rbf':
         classifier = svm.SVC(kernel='rbf', C=15, gamma=5, class_weight='balanced',
@@ -137,19 +137,22 @@ def main(result_dir: str, data_atlas_dir: str, data_train_dir: str, data_test_di
 
 
         predictions = classifier.predict(scaled_features)
-        probabilities = classifier.predict_proba(scaled_features)
+
         print(' Time elapsed:', timeit.default_timer() - start_time, 's')
 
         # convert prediction and probabilities back to SimpleITK images
         image_prediction = conversion.NumpySimpleITKImageBridge.convert(predictions.astype(np.uint8),
                                                                         img.image_properties)
+
+        probabilities = classifier.predict_proba(scaled_features)
         image_probabilities = conversion.NumpySimpleITKImageBridge.convert(probabilities, img.image_properties)
+        images_probabilities.append(image_probabilities)
 
         # evaluate segmentation without post-processing
         evaluator.evaluate(image_prediction, img.images[structure.BrainImageTypes.GroundTruth], img.id_)
 
         images_prediction.append(image_prediction)
-        images_probabilities.append(image_probabilities)
+
 
     # post-process segmentation and evaluate with post-processing
     post_process_params = {'crf_post': False}
@@ -203,8 +206,9 @@ if __name__ == "__main__":
     parser.add_argument(
         '--ml_method',
         type=str,
-        default='random_forest',
-        help='ML learning algorithm for segmentation'
+        #default='random_forest',
+        default='logistic_regression',
+        help='ML learning algorithm for segmentation {\'random_forest\',\'svm_linear\', \'svm_rbf\', \'logistic_regression\''
     )
 
     parser.add_argument(
